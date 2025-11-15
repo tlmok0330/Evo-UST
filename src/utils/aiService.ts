@@ -137,11 +137,11 @@ Return ONLY a JSON array:
       
       // Remove any instruction tokens or markdown formatting
       let cleanedResponse = aiResponse
-        .replace(/\\[B_INST\\].*?\\[\\/B_INST\\]/gs, '')
+        .replace(/\[B_INST\].*?\[\/B_INST\]/gs, '') // Remove instruction tokens
         .replace(/<s>/g, '') // Remove <s> tokens
         .replace(/<\/s>/g, '') // Remove </s> tokens
-        .replace(/```json\\s*/g, '')
-        .replace(/```\\s*/g, '')
+        .replace(/```json\s*/g, '') // Remove ```json markdown
+        .replace(/```\s*/g, '') // Remove ``` markdown
         .trim();
       
       // Extract JSON from the response if it's wrapped in text

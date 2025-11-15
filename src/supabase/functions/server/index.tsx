@@ -4,6 +4,7 @@ import { logger } from "npm:hono/logger";
 // @ts-ignore
 import * as kv from "./kv_store.tsx";
 import userInterestsApp from "./user_interests.tsx";
+import { getFlightProvider } from "./flightService.ts";
 
 const app = new Hono();
 
@@ -180,6 +181,48 @@ app.delete("/make-server-db8b1db2/posts/:postId", async (c) => {
     console.error('Error in delete post endpoint:', error);
     return c.json({ 
       error: error.message || 'Failed to delete post',
+    }, 500);
+  }
+});
+
+// Flight search endpoint
+app.post("/make-server-db8b1db2/flights/search", async (c) => {
+  try {
+    const searchRequest = await c.req.json();
+
+    console.log('Flight search request:', JSON.stringify(searchRequest));
+
+    // Validate required fields
+    if (!searchRequest.origin || !searchRequest.destination) {
+      return c.json({ error: 'Origin and destination are required' }, 400);
+    }
+    if (!searchRequest.departureDate) {
+      return c.json({ error: 'Departure date is required' }, 400);
+    }
+    if (!searchRequest.adults || searchRequest.adults < 1) {
+      return c.json({ error: 'At least one adult passenger is required' }, 400);
+    }
+
+    // Default values
+    searchRequest.children = searchRequest.children || 0;
+    searchRequest.infants = searchRequest.infants || 0;
+    searchRequest.cabinClass = searchRequest.cabinClass || 'economy';
+
+    // Get flight provider (simulation or real API)
+    const flightProvider = getFlightProvider();
+
+    // Search flights
+    console.log('Searching flights...');
+    const results = await flightProvider.searchFlights(searchRequest);
+
+    console.log(`Found ${results.data.length} flights`);
+    return c.json(results);
+
+  } catch (error: any) {
+    console.error('Error in flight search endpoint:', error);
+    return c.json({ 
+      error: error.message || 'Failed to search flights',
+      details: error.stack,
     }, 500);
   }
 });

@@ -30,23 +30,23 @@ export function PreFlightDialog({ open, onOpenChange, onConfirm }: PreFlightDial
 
   const calculatePoints = () => {
     let points = 0;
-    if (noHeadphones) points += 5;
-    if (noBlanket) points += 5;
-    if (selectedMeal === 'chicken') points += 10;
-    if (selectedMeal === 'beef') points += 10;
-    if (selectedMeal === 'vegetable') points += 25;
-    if (lighterLuggage) points += 20;
+    if (noHeadphones) points += 25;
+    if (noBlanket) points += 25;
+    if (selectedMeal === 'chicken') points += 50;
+    if (selectedMeal === 'beef') points += 50;
+    if (selectedMeal === 'vegetable') points += 75;
+    if (lighterLuggage) points += 300;
     return points;
   };
 
   const calculateCO2Offset = () => {
     let co2 = 0;
-    if (noHeadphones) co2 += 0.10;
-    if (noBlanket) co2 += 0.21;
+    if (noHeadphones) co2 += 0.5;
+    if (noBlanket) co2 += 0.5;
     if (selectedMeal === 'chicken') co2 += 1.0;
     if (selectedMeal === 'beef') co2 += 1.0;
-    if (selectedMeal === 'vegetable') co2 += 2.0;
-    if (lighterLuggage) co2 += 10.0;
+    if (selectedMeal === 'vegetable') co2 += 1.5;
+    if (lighterLuggage) co2 += 6.0;
     return co2;
   };
 
@@ -118,11 +118,11 @@ export function PreFlightDialog({ open, onOpenChange, onConfirm }: PreFlightDial
                     No Headphones Needed
                   </Label>
                   <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-                    +5 pts
+                    +25 pts
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Bring your own or skip to reduce waste • Saves 0.10 kg CO₂
+                  Bring your own or skip to reduce waste • Saves 0.5 kg CO₂
                 </p>
               </div>
             </div>
@@ -145,11 +145,11 @@ export function PreFlightDialog({ open, onOpenChange, onConfirm }: PreFlightDial
                     No In-flight Blanket
                   </Label>
                   <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-                    +5 pts
+                    +25 pts
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Reduce laundry and packaging waste • Saves 0.21 kg CO₂
+                  Reduce laundry and packaging waste • Saves 0.5 kg CO₂
                 </p>
               </div>
             </div>
@@ -186,7 +186,7 @@ export function PreFlightDialog({ open, onOpenChange, onConfirm }: PreFlightDial
                   </div>
                 </div>
                 <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-                  +10 pts
+                  +50 pts
                 </Badge>
               </div>
 
@@ -201,7 +201,7 @@ export function PreFlightDialog({ open, onOpenChange, onConfirm }: PreFlightDial
                   </div>
                 </div>
                 <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-                  +10 pts
+                  +50 pts
                 </Badge>
               </div>
 
@@ -212,11 +212,11 @@ export function PreFlightDialog({ open, onOpenChange, onConfirm }: PreFlightDial
                     <Label htmlFor="vegetable" className="cursor-pointer">
                       Mediterranean Vegetable Medley
                     </Label>
-                    <p className="text-xs text-muted-foreground">Roasted vegetables with quinoa and herbs • Saves 2.0 kg CO₂</p>
+                    <p className="text-xs text-muted-foreground">Roasted vegetables with quinoa and herbs • Saves 1.5 kg CO₂</p>
                   </div>
                 </div>
                 <Badge variant="secondary" className="bg-green-600 text-white border-green-700">
-                  +25 pts ⭐
+                  +75 pts ⭐
                 </Badge>
               </div>
             </RadioGroup>
@@ -236,11 +236,11 @@ export function PreFlightDialog({ open, onOpenChange, onConfirm }: PreFlightDial
                     Bringing Lighter Luggage
                   </Label>
                   <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-                    +20 pts
+                    +300 pts
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Under 15kg helps reduce fuel consumption • Saves 10.0 kg CO₂
+                  Under 15kg helps reduce fuel consumption • Saves 6.0 kg CO₂
                 </p>
               </div>
             </div>
