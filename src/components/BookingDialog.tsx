@@ -48,8 +48,67 @@ export function BookingDialog({ open, onOpenChange, activity, onBookingConfirmed
 
   if (!activity) return null;
 
-  // Calculate pricing based on activity type
-  const basePrice = activity.isEcoFriendly ? 120 : 180;
+  // Calculate pricing based on activity type and content (in HKD)
+  const calculateActivityPrice = (): number => {
+    const titleLower = activity.title.toLowerCase();
+    const descLower = (activity.description || '').toLowerCase();
+    const combined = titleLower + ' ' + descLower;
+    
+    // Premium experiences (HKD 800-1500)
+    if (combined.includes('spa') || combined.includes('wellness') || combined.includes('luxury') || 
+        combined.includes('yacht') || combined.includes('helicopter') || combined.includes('private')) {
+      return activity.isEcoFriendly ? 900 : 1200;
+    }
+    
+    // Adventure/sports (HKD 600-1000)
+    if (combined.includes('diving') || combined.includes('surfing') || combined.includes('kayak') || 
+        combined.includes('climbing') || combined.includes('rafting') || combined.includes('zipline') ||
+        combined.includes('adventure')) {
+      return activity.isEcoFriendly ? 650 : 850;
+    }
+    
+    // Food & dining experiences (HKD 400-700)
+    if (combined.includes('food') || combined.includes('dining') || combined.includes('restaurant') || 
+        combined.includes('culinary') || combined.includes('cooking') || combined.includes('tasting') ||
+        combined.includes('market tour') || combined.includes('chef')) {
+      return activity.isEcoFriendly ? 450 : 600;
+    }
+    
+    // Boat/cruise experiences (HKD 500-900)
+    if (combined.includes('cruise') || combined.includes('boat') || combined.includes('sailing') || 
+        combined.includes('ferry') || combined.includes('harbor')) {
+      return activity.isEcoFriendly ? 550 : 750;
+    }
+    
+    // Workshops/classes (HKD 400-800)
+    if (combined.includes('workshop') || combined.includes('class') || combined.includes('lesson') || 
+        combined.includes('pottery') || combined.includes('craft') || combined.includes('art')) {
+      return activity.isEcoFriendly ? 450 : 650;
+    }
+    
+    // Outdoor activities/hiking (HKD 300-500)
+    if (combined.includes('hike') || combined.includes('hiking') || combined.includes('trek') || 
+        combined.includes('mountain') || combined.includes('trail') || combined.includes('nature walk')) {
+      return activity.isEcoFriendly ? 320 : 450;
+    }
+    
+    // Museums/cultural sites (HKD 200-400)
+    if (combined.includes('museum') || combined.includes('temple') || combined.includes('historic') || 
+        combined.includes('heritage') || combined.includes('gallery') || combined.includes('monument')) {
+      return activity.isEcoFriendly ? 220 : 350;
+    }
+    
+    // Tours (HKD 350-600)
+    if (combined.includes('tour') || combined.includes('sightseeing') || combined.includes('city walk') ||
+        combined.includes('guided')) {
+      return activity.isEcoFriendly ? 380 : 520;
+    }
+    
+    // Default/general activities (HKD 300-500)
+    return activity.isEcoFriendly ? 350 : 480;
+  };
+
+  const basePrice = calculateActivityPrice();
   const totalPrice = basePrice * guests;
   const greenPointsEarned = activity.isEcoFriendly ? 50 * guests : 25 * guests;
 
@@ -179,7 +238,7 @@ export function BookingDialog({ open, onOpenChange, activity, onBookingConfirmed
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Price per person</span>
-                <span className="font-medium">${basePrice} USD</span>
+                <span className="font-medium">HK${basePrice}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Guests</span>
@@ -188,7 +247,7 @@ export function BookingDialog({ open, onOpenChange, activity, onBookingConfirmed
               <div className="border-t pt-2 mt-2">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold">Total</span>
-                  <span className="text-lg font-bold text-primary">${totalPrice} USD</span>
+                  <span className="text-lg font-bold text-primary">HK${totalPrice}</span>
                 </div>
               </div>
             </div>
@@ -213,29 +272,6 @@ export function BookingDialog({ open, onOpenChange, activity, onBookingConfirmed
             </div>
           </Card>
 
-          {/* Booking Benefits */}
-          <Card className="p-4 bg-gradient-to-br from-purple-50 to-white border-purple-200">
-            <h3 className="text-sm font-semibold mb-3 text-purple-900">What's Included</h3>
-            <div className="space-y-2">
-              <div className="flex items-start gap-2 text-sm">
-                <Check className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-                <span className="text-purple-900">Priority access & VIP treatment</span>
-              </div>
-              <div className="flex items-start gap-2 text-sm">
-                <Check className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-                <span className="text-purple-900">Expert guide or concierge service</span>
-              </div>
-              <div className="flex items-start gap-2 text-sm">
-                <Check className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-                <span className="text-purple-900">Complimentary refreshments</span>
-              </div>
-              <div className="flex items-start gap-2 text-sm">
-                <Check className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-                <span className="text-purple-900">Free cancellation up to 24h before</span>
-              </div>
-            </div>
-          </Card>
-
           {/* Booking Button */}
           <Button
             onClick={handleBooking}
@@ -250,7 +286,7 @@ export function BookingDialog({ open, onOpenChange, activity, onBookingConfirmed
             ) : (
               <>
                 <CreditCard className="mr-2 h-5 w-5" />
-                Confirm Booking - ${totalPrice} USD
+                Confirm Booking - HK${totalPrice}
               </>
             )}
           </Button>

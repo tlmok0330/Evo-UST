@@ -385,6 +385,7 @@ export function ItineraryDetailDialog({
         preferences: ['eco-friendly', 'sustainable', 'local'],
         userInterests, // Pass user interests to AI
         flightConstraints, // Pass flight time constraints
+        trendingKeywords, // Pass trending keywords from community
       });
 
       console.log('User selected interests:', userInterests);

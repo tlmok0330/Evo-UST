@@ -93,46 +93,10 @@ export function Community() {
     location?: string;
     ecoActions?: string[];
   } | undefined>(undefined);
+  const [showFullFeed, setShowFullFeed] = useState(false);
 
   // Default posts that are always visible
-  const defaultPosts: OtherPost[] = [
-    {
-      id: '1',
-      username: 'Tom',
-      userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tom',
-      date: 'Nov 24',
-      caption: 'Delicious plant-based dinner tonight!',
-      image: 'https://images.unsplash.com/photo-1633311151183-c92c4e306e5f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwbGFudCUyMGJhc2VkJTIwZm9vZCUyMG1lYWx8ZW58MXx8fHwxNzYzMTkxNjE5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-      likes: 15,
-      comments: 3,
-      ecoActions: ['Reduced Food Waste', 'Used Reusable Containers'],
-      isLiked: false
-    },
-    {
-      id: '2',
-      username: 'Sean',
-      userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sean',
-      date: 'Nov 15',
-      caption: 'I brought my own bottle on flight\n#Cathay Pacific',
-      image: 'https://images.unsplash.com/photo-1759692071732-ee1b94b497cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXVzYWJsZSUyMHdhdGVyJTIwYm90dGxlJTIwdHJhdmVsfGVufDF8fHx8MTc2MzE4Nzk5M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-      likes: 20,
-      comments: 5,
-      ecoActions: ['Used Reusable Bottle', 'Digital Boarding Pass'],
-      isLiked: false
-    },
-    {
-      id: '3',
-      username: 'Sarah',
-      userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
-      date: 'Nov 15',
-      caption: '#Less screen time\n#Go on hike',
-      image: 'https://images.unsplash.com/photo-1595368062405-e4d7840cba14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoaWtpbmclMjBtb3VudGFpbiUyMGFkdmVudHVyZXxlbnwxfHx8fDE3NjMxOTE2MTl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-      likes: 10,
-      comments: 2,
-      ecoActions: ['Reduced Screen Time', 'Outdoor Activity'],
-      isLiked: false
-    },
-  ];
+  const defaultPosts: OtherPost[] = [];
 
   // Load user posts from localStorage and combine with default posts
   const [othersPosts, setOthersPosts] = useState<OtherPost[]>(() => {
@@ -209,7 +173,15 @@ export function Community() {
       'no-plastic': 'Avoided Single-Use Plastics',
     };
 
-    const ecoActionsLabeled = postData.ecoActions.map((id: string) => ecoActionLabels[id] || id);
+    // Process eco actions: map known IDs to labels, keep custom hashtags as-is
+    const ecoActionsLabeled = postData.ecoActions.map((action: string) => {
+      // If it's a known eco action ID, use the label
+      if (ecoActionLabels[action]) {
+        return ecoActionLabels[action];
+      }
+      // Otherwise it's a custom hashtag, return as-is with # prefix
+      return action.startsWith('#') ? action : `#${action}`;
+    });
 
     // Get username from localStorage (same as Profile page)
     const username = localStorage.getItem('userName') || 'Sarah Chen';
@@ -219,7 +191,7 @@ export function Community() {
       username: username,
       userAvatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,
       date: 'Just now',
-      caption: postData.caption + (postData.location ? `\\\\\\\\n📍 ${postData.location}` : ''),
+      caption: postData.caption + (postData.location ? `\n📍 ${postData.location}` : ''),
       image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmF2ZWwlMjBqb3VybmV5fGVufDF8fHx8MTc2MzE5MTYxOXww&ixlib=rb-4.1.0&q=80&w=1080',
       likes: 0,
       comments: 0,
@@ -635,14 +607,25 @@ export function Community() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl text-white">Others' Footprint</h2>
-            <Button
-              onClick={() => setIsCreateDialogOpen(true)}
-              className="bg-white text-primary hover:bg-white/90 gap-2"
-              size="sm"
-            >
-              <Plus className="h-4 w-4" />
-              Share Your Journey
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setShowFullFeed(true)}
+                variant="outline"
+                className="bg-white/10 text-white border-white/20 hover:bg-white/20 gap-2"
+                size="sm"
+              >
+                <Camera className="h-4 w-4" />
+                View All Posts
+              </Button>
+              <Button
+                onClick={() => setIsCreateDialogOpen(true)}
+                className="bg-white text-primary hover:bg-white/90 gap-2"
+                size="sm"
+              >
+                <Plus className="h-4 w-4" />
+                Share Your Journey
+              </Button>
+            </div>
           </div>
           <div className="flex gap-3 overflow-x-auto pb-2">
             {othersPosts.map((post) => {
@@ -903,6 +886,125 @@ export function Community() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Full Feed Dialog - Instagram Style */}
+      <Dialog open={showFullFeed} onOpenChange={setShowFullFeed}>
+        <DialogContent className="max-w-[95vw] max-h-[95vh] w-full p-0 bg-white overflow-hidden flex flex-col">
+          <VisuallyHidden.Root>
+            <DialogHeader>
+              <DialogTitle>All Community Posts</DialogTitle>
+              <DialogDescription>Browse all posts from the community</DialogDescription>
+            </DialogHeader>
+          </VisuallyHidden.Root>
+          
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b bg-white shrink-0">
+            <div>
+              <h2 className="text-xl">Community Feed</h2>
+              <p className="text-sm text-muted-foreground">{othersPosts.length} posts</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={() => setShowFullFeed(false)}
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+
+          {/* Posts Grid - Scrollable */}
+          <div className="flex-1 overflow-y-auto p-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+              {othersPosts.map((post) => {
+                const isDefaultPost = defaultPosts.some(p => p.id === post.id);
+                const canDelete = !isDefaultPost;
+                
+                return (
+                  <Card
+                    key={post.id}
+                    className="bg-white border-0 shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-all hover:scale-[1.02] relative group"
+                    onClick={() => {
+                      setSelectedPost(post);
+                      setShowFullFeed(false);
+                    }}
+                  >
+                    {/* Image */}
+                    <div className="aspect-square relative">
+                      <ImageWithFallback
+                        src={post.image}
+                        alt={post.caption}
+                        className="w-full h-full object-cover"
+                      />
+                      
+                      {/* Hover Overlay */}
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-6">
+                        <div className="flex items-center gap-2 text-white">
+                          <Heart className="h-6 w-6" />
+                          <span>{post.likes + (likedPosts.has(post.id) ? 1 : 0)}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-white">
+                          <MessageCircle className="h-6 w-6" />
+                          <span>{post.comments}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Post Info */}
+                    <div className="p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Avatar className="h-7 w-7">
+                          <AvatarImage src={post.userAvatar} />
+                          <AvatarFallback>{post.username[0]}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <p className="text-sm">{post.username}</p>
+                          <p className="text-xs text-muted-foreground">{post.date}</p>
+                        </div>
+                        {canDelete && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 w-7 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeletePost(post.id, e);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground line-clamp-2 whitespace-pre-line">
+                        {post.caption}
+                      </p>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+            
+            {/* Empty State */}
+            {othersPosts.length === 0 && (
+              <div className="text-center py-16 text-muted-foreground">
+                <Camera className="h-16 w-16 mx-auto mb-4 opacity-20" />
+                <p className="text-lg mb-2">No Posts Yet</p>
+                <p className="text-sm">Be the first to share your sustainable journey!</p>
+                <Button
+                  onClick={() => {
+                    setShowFullFeed(false);
+                    setIsCreateDialogOpen(true);
+                  }}
+                  className="mt-4 bg-primary hover:bg-primary/90"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Post
+                </Button>
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

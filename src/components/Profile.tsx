@@ -31,47 +31,39 @@ const TIERS = [
   { 
     name: 'Bronze', 
     minPoints: 0, 
-    maxPoints: 999, 
+    maxPoints: 2999, 
     icon: Award,
-    color: 'from-amber-700 to-amber-900',
-    textColor: 'text-amber-700',
-    bgColor: 'bg-amber-50',
-    borderColor: 'border-amber-200',
+    color: 'text-amber-600',
+    bgGradient: 'from-amber-500/20 to-amber-600/10',
     badgeColor: 'bg-amber-100 text-amber-700 border-amber-300'
   },
   { 
     name: 'Silver', 
-    minPoints: 1000, 
-    maxPoints: 2999, 
+    minPoints: 3000, 
+    maxPoints: 9999, 
     icon: Star,
-    color: 'from-gray-400 to-gray-600',
-    textColor: 'text-gray-600',
-    bgColor: 'bg-gray-50',
-    borderColor: 'border-gray-300',
+    color: 'text-gray-600',
+    bgGradient: 'from-gray-400/20 to-gray-500/10',
     badgeColor: 'bg-gray-100 text-gray-700 border-gray-300'
   },
   { 
     name: 'Gold', 
-    minPoints: 3000, 
-    maxPoints: 5999, 
+    minPoints: 10000, 
+    maxPoints: 24999, 
     icon: Crown,
-    color: 'from-yellow-400 to-yellow-600',
-    textColor: 'text-yellow-600',
-    bgColor: 'bg-yellow-50',
-    borderColor: 'border-yellow-300',
+    color: 'text-yellow-600',
+    bgGradient: 'from-yellow-400/20 to-yellow-500/10',
     badgeColor: 'bg-yellow-100 text-yellow-700 border-yellow-300'
   },
   { 
     name: 'Diamond', 
-    minPoints: 6000, 
+    minPoints: 25000, 
     maxPoints: Infinity, 
     icon: Gem,
-    color: 'from-cyan-400 to-blue-600',
-    textColor: 'text-cyan-600',
-    bgColor: 'bg-cyan-50',
-    borderColor: 'border-cyan-300',
+    color: 'text-cyan-600',
+    bgGradient: 'from-cyan-400/20 to-cyan-500/10',
     badgeColor: 'bg-cyan-100 text-cyan-700 border-cyan-300'
-  },
+  }
 ];
 
 const getTierInfo = (points: number) => {
@@ -94,12 +86,12 @@ const getTierInfo = (points: number) => {
 export function Profile() {
   const [accumulatedPoints, setAccumulatedPoints] = useState(() => {
     const saved = localStorage.getItem('greenPointsAccumulated');
-    return saved ? parseInt(saved) : 2840;
+    return saved ? parseInt(saved) : 15000; // Gold tier status
   });
 
   const [greenPoints, setGreenPoints] = useState(() => {
     const saved = localStorage.getItem('greenPointsBalance');
-    return saved ? parseInt(saved) : 680;
+    return saved ? parseInt(saved) : 12500; // Higher balance for Gold tier
   });
 
   const [interests, setInterests] = useState<string[]>(() => {

@@ -15,52 +15,75 @@ export async function extractKeywordsFromPost(caption: string, ecoActions: strin
 function extractKeywordsFallback(caption: string, ecoActions: string[]): string[] {
   const keywords: string[] = [];
   
-  // Common activity keywords to look for
+  // More specific activity keywords to look for (focus on concrete activities, not adjectives)
   const activityKeywords = [
-    'hiking', 'cycling', 'biking', 'walking', 'temple', 'museum', 'beach', 'market',
-    'food', 'restaurant', 'local', 'sustainable', 'eco', 'wildlife', 'nature',
-    'park', 'garden', 'tour', 'adventure', 'cooking', 'yoga', 'meditation',
-    'diving', 'snorkeling', 'kayaking', 'camping', 'volunteering', 'farm',
-    'organic', 'vegan', 'vegetarian', 'cultural', 'heritage', 'traditional',
-    'art', 'craft', 'workshop', 'spa', 'wellness', 'sunset', 'sunrise',
-    'mountain', 'forest', 'river', 'lake', 'waterfall', 'village', 'city',
+    // Specific outdoor activities
+    'hiking', 'trekking', 'mountain climbing', 'rock climbing', 'trail running',
+    'cycling', 'biking', 'kayaking', 'canoeing', 'rafting', 'snorkeling', 'diving',
+    'surfing', 'paddleboarding', 'camping', 'backpacking', 'wildlife watching',
+    
+    // Specific cultural activities
+    'temple visit', 'museum tour', 'art gallery', 'cultural show', 'traditional dance',
+    'cooking class', 'food tour', 'market visit', 'craft workshop', 'pottery class',
+    'tea ceremony', 'meditation retreat', 'yoga retreat', 'wellness retreat',
+    
+    // Specific locations/venues
+    'national park', 'nature reserve', 'botanical garden', 'historic site',
+    'heritage site', 'local market', 'farmers market', 'organic farm', 'eco lodge',
+    'sustainability center', 'wildlife sanctuary', 'conservation area',
+    
+    // Specific food/dining activities
+    'farm to table', 'plant based meal', 'vegan restaurant', 'organic cafe',
+    'local cuisine', 'street food tour', 'wine tasting', 'farm visit',
+    
+    // Specific eco activities
+    'beach cleanup', 'tree planting', 'volunteering', 'conservation project',
+    'eco workshop', 'sustainability tour', 'green building tour', 'solar farm visit',
   ];
   
   // Convert to lowercase for matching
   const lowerCaption = caption.toLowerCase();
   
-  // Find matching keywords in caption
-  for (const keyword of activityKeywords) {
+  // Find matching keywords in caption - prefer longer, more specific phrases first
+  const sortedKeywords = activityKeywords.sort((a, b) => b.length - a.length);
+  
+  for (const keyword of sortedKeywords) {
     if (lowerCaption.includes(keyword) && keywords.length < 3) {
       keywords.push(keyword);
     }
   }
   
-  // Add keywords from eco actions if we need more
+  // Add specific keywords from eco actions if we need more
   if (keywords.length < 3) {
-    const ecoKeywords = ecoActions.map(action => {
-      // Extract key word from eco action
-      if (action.toLowerCase().includes('transport')) return 'transport';
-      if (action.toLowerCase().includes('bike') || action.toLowerCase().includes('cycl')) return 'cycling';
-      if (action.toLowerCase().includes('reusable')) return 'reusable';
-      if (action.toLowerCase().includes('food')) return 'local food';
-      if (action.toLowerCase().includes('hotel')) return 'eco hotel';
-      if (action.toLowerCase().includes('plastic')) return 'no plastic';
-      return action.toLowerCase().split(' ')[0];
-    });
+    const ecoKeywordMapping: Record<string, string> = {
+      'transport': 'public transportation',
+      'bike': 'cycling tour',
+      'cycl': 'cycling tour',
+      'reusable': 'zero waste practice',
+      'food': 'local food experience',
+      'hotel': 'eco accommodation',
+      'plastic': 'plastic free travel',
+    };
     
-    for (const keyword of ecoKeywords) {
-      if (!keywords.includes(keyword) && keywords.length < 3) {
-        keywords.push(keyword);
+    for (const action of ecoActions) {
+      const lowerAction = action.toLowerCase();
+      for (const [key, value] of Object.entries(ecoKeywordMapping)) {
+        if (lowerAction.includes(key) && !keywords.includes(value) && keywords.length < 3) {
+          keywords.push(value);
+        }
       }
     }
   }
   
-  // If still not enough, add generic travel keywords
-  const genericKeywords = ['sustainable travel', 'eco friendly', 'green living'];
-  for (const keyword of genericKeywords) {
-    if (keywords.length < 3) {
-      keywords.push(keyword);
+  // Extract hashtags as specific keywords (they're usually specific activities)
+  const hashtagMatches = caption.match(/#(\w+)/g);
+  if (hashtagMatches && keywords.length < 3) {
+    for (const hashtag of hashtagMatches) {
+      const cleanHashtag = hashtag.replace('#', '').toLowerCase();
+      // Only add if it's not too generic (more than 4 characters)
+      if (cleanHashtag.length > 4 && keywords.length < 3 && !keywords.includes(cleanHashtag)) {
+        keywords.push(cleanHashtag);
+      }
     }
   }
   

@@ -55,7 +55,7 @@ export interface DayPlan {
 }
 
 interface TravelPlannerProps {
-  onNavigate?: (page: 'dashboard' | 'holiday' | 'itinerary' | 'rewards' | 'community' | 'testing') => void;
+  onNavigate?: (page: 'dashboard' | 'holiday' | 'itinerary' | 'rewards' | 'community' | 'profile') => void;
 }
 
 export function TravelPlanner({ onNavigate }: TravelPlannerProps) {

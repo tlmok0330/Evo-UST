@@ -31,6 +31,7 @@ export function CreatePostDialog({ open, onOpenChange, onPost, prefilledData }: 
   const [caption, setCaption] = useState('');
   const [location, setLocation] = useState('');
   const [ecoActions, setEcoActions] = useState<string[]>([]);
+  const [customHashtags, setCustomHashtags] = useState('');
 
   // Update form when prefilled data changes
   useEffect(() => {
@@ -66,21 +67,40 @@ export function CreatePostDialog({ open, onOpenChange, onPost, prefilledData }: 
   };
 
   const handlePost = () => {
+    // Parse custom hashtags (split by spaces or commas, remove # symbols)
+    const parsedHashtags = customHashtags
+      .split(/[\s,]+/) // Split by spaces or commas
+      .map(tag => tag.trim().replace(/^#/, '')) // Remove # symbol and trim
+      .filter(tag => tag.length > 0); // Remove empty strings
+    
+    // Combine eco actions with custom hashtags
+    const allEcoActions = [...ecoActions, ...parsedHashtags];
+    
     onPost({
-      caption,
+      caption: caption, // Don't append hashtags to caption anymore
       location,
-      ecoActions,
+      ecoActions: allEcoActions, // Include custom hashtags in eco actions
+      customHashtags: parsedHashtags,
       pointsEarned: 0,
     });
     // Reset form
     setCaption('');
     setLocation('');
     setEcoActions([]);
+    setCustomHashtags('');
     onOpenChange(false);
   };
 
   const totalPoints = calculatePoints();
-  const isValid = caption.length > 0 && location.length > 0 && ecoActions.length > 0;
+  
+  // Parse hashtags for validation
+  const parsedHashtags = customHashtags
+    .split(/[\s,]+/)
+    .map(tag => tag.trim().replace(/^#/, ''))
+    .filter(tag => tag.length > 0);
+  
+  // Valid if caption and location are filled, AND either eco-actions or custom hashtags are provided
+  const isValid = caption.length > 0 && location.length > 0 && (ecoActions.length > 0 || parsedHashtags.length > 0);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -169,6 +189,22 @@ export function CreatePostDialog({ open, onOpenChange, onPost, prefilledData }: 
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Custom Hashtags Input */}
+          <div className="space-y-2">
+            <Label htmlFor="hashtags" className="flex items-center gap-2">
+              #️⃣ Add Custom Hashtags
+            </Label>
+            <Input
+              id="hashtags"
+              placeholder="e.g., #SustainableTravel #EcoWarrior #GreenLiving"
+              value={customHashtags}
+              onChange={(e) => setCustomHashtags(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              Separate hashtags with spaces or commas
+            </p>
           </div>
 
           {/* Tips Section */}

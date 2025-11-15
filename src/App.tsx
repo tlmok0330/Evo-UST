@@ -4,12 +4,11 @@ import { TravelPlanner } from './components/TravelPlanner';
 import { Itinerary } from './components/Itinerary';
 import { Rewards } from './components/Rewards';
 import { Community } from './components/Community';
-import { Testing } from './components/Testing';
 import { Profile } from './components/Profile';
-import { LayoutDashboard, Palmtree, Calendar, Trophy, Users, FlaskConical, UserCircle } from 'lucide-react';
+import { LayoutDashboard, Palmtree, Calendar, Trophy, Users, UserCircle } from 'lucide-react';
 import { Toaster } from './components/ui/sonner';
 
-type Page = 'dashboard' | 'holiday' | 'itinerary' | 'rewards' | 'community' | 'testing' | 'profile';
+type Page = 'dashboard' | 'holiday' | 'itinerary' | 'rewards' | 'community' | 'profile';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
@@ -23,7 +22,6 @@ export default function App() {
         {currentPage === 'itinerary' && <Itinerary />}
         {currentPage === 'rewards' && <Rewards />}
         {currentPage === 'community' && <Community />}
-        {currentPage === 'testing' && <Testing />}
         {currentPage === 'profile' && <Profile />}
       </div>
 
@@ -88,18 +86,6 @@ export default function App() {
           >
             <Users className="h-5 w-5" />
             <span className="text-xs">Community</span>
-          </button>
-
-          <button
-            onClick={() => setCurrentPage('testing')}
-            className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors ${
-              currentPage === 'testing'
-                ? 'text-primary'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <FlaskConical className="h-5 w-5" />
-            <span className="text-xs">Testing</span>
           </button>
 
           <button

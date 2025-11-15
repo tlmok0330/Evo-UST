@@ -49,11 +49,11 @@ app.post("/make-server-db8b1db2/chat", async (c) => {
       return c.json({ error: 'userMessage is required' }, 400);
     }
 
-    // Build messages array
+    // Build messages array with more explicit system prompt
     const fullMessages = [
       {
         role: 'system',
-        content: 'You are a helpful travel assistant for an eco-friendly travel app called Cathay Pacific Green Travel. Help users with travel planning, sustainable travel tips, and answering questions about eco-friendly travel options. Keep responses concise and practical.',
+        content: 'You are a travel activity suggestion assistant. You MUST respond with valid JSON only, no other text. Generate activity suggestions in this exact format:\n[{"title":"Activity Name","time":"HH:MM","location":"Location","description":"Brief description","partnerName":"Partner Company Name","isEcoFriendly":true,"matchingInterests":["Interest1","Interest2"]}]\n\nIMPORTANT: Output ONLY the JSON array, nothing else. No explanations, no markdown, just the raw JSON array.',
       },
       ...(messages || []).map((msg: any) => ({
         role: msg.role,
@@ -65,10 +65,10 @@ app.post("/make-server-db8b1db2/chat", async (c) => {
       },
     ];
 
-    console.log('Calling OpenRouter API...');
+    console.log('Calling OpenRouter API with Mistral 7B...');
     console.log('Prompt length:', userMessage.length);
 
-    // Call OpenRouter API
+    // Call OpenRouter API with Mistral 7B
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -80,8 +80,8 @@ app.post("/make-server-db8b1db2/chat", async (c) => {
       body: JSON.stringify({
         model: 'mistralai/mistral-7b-instruct:free',
         messages: fullMessages,
-        max_tokens: 1000, // Increased for JSON responses
-        temperature: 0.7,
+        max_tokens: 2000, // Increased for JSON responses
+        temperature: 0.3, // Lower temperature for more consistent JSON output
       }),
     });
 
@@ -100,19 +100,74 @@ app.post("/make-server-db8b1db2/chat", async (c) => {
     
     const aiResponse = data.choices?.[0]?.message?.content;
 
-    // Check for empty or whitespace-only responses
-    if (!aiResponse || aiResponse.trim() === '') {
-      console.error('No response from AI model (empty or whitespace)');
-      console.error('Full response:', JSON.stringify(data));
+    // Aggressive validation for empty/whitespace responses
+    if (!aiResponse || !aiResponse.trim() || aiResponse.trim().length < 10) {
+      console.error('Empty or too short response from AI model');
+      console.error('AI response:', aiResponse);
+      console.error('Full API response:', JSON.stringify(data));
       return c.json({ 
-        error: 'No response from AI model',
+        error: 'Empty response from AI model',
         fallback: true 
       }, 500);
     }
 
-    console.log('AI response generated successfully');
-    console.log('Response preview:', aiResponse.substring(0, 200));
-    return c.json({ response: aiResponse });
+    // Clean the response aggressively
+    const cleanedResponse = aiResponse.trim()
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/\s*```$/i, '')
+      .replace(/^\s*\[B_INST\][\s\S]*?\[\/B_INST\]\s*/g, '')
+      .replace(/<\/?s>/g, '')
+      .trim();
+
+    // Ensure we have actual content
+    if (cleanedResponse.length < 10 || !cleanedResponse.includes('{')) {
+      console.error('Invalid response format from AI model');
+      console.error('Cleaned response:', cleanedResponse);
+      return c.json({ 
+        error: 'Invalid response format - no JSON structure found',
+        fallback: true 
+      }, 500);
+    }
+
+    // Try to parse as JSON to validate before sending to frontend
+    try {
+      const jsonMatch = cleanedResponse.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          console.log('✅ Valid JSON response from Mistral 7B');
+          console.log('Response preview:', cleanedResponse.substring(0, 200));
+          return c.json({ response: cleanedResponse });
+        } else {
+          console.error('Parsed JSON but array is empty');
+          return c.json({ 
+            error: 'AI returned empty array',
+            fallback: true 
+          }, 500);
+        }
+      }
+      
+      // If no array match, try parsing the whole thing
+      const parsed = JSON.parse(cleanedResponse);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        console.log('✅ Valid JSON response from Mistral 7B');
+        return c.json({ response: cleanedResponse });
+      }
+      
+      console.error('Parsed JSON but invalid structure (not array or empty)');
+      return c.json({ 
+        error: 'Invalid JSON structure',
+        fallback: true 
+      }, 500);
+    } catch (parseError: any) {
+      console.error('JSON parse error:', parseError.message);
+      console.error('Attempted to parse:', cleanedResponse);
+      return c.json({ 
+        error: `Parse error: ${parseError.message}`,
+        fallback: true 
+      }, 500);
+    }
 
   } catch (error: any) {
     console.error('Error in chat endpoint:', error);
@@ -181,6 +236,62 @@ app.delete("/make-server-db8b1db2/posts/:postId", async (c) => {
     console.error('Error in delete post endpoint:', error);
     return c.json({ 
       error: error.message || 'Failed to delete post',
+    }, 500);
+  }
+});
+
+// Clear all community posts and keywords (testing endpoint)
+app.delete("/make-server-db8b1db2/posts-clear-all", async (c) => {
+  try {
+    console.log('Clearing all community posts and keywords...');
+
+    // Create Supabase client with service role key for admin access
+    const { createClient } = await import('npm:@supabase/supabase-js@2');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error('Supabase credentials not configured');
+      return c.json({ error: 'Database not configured' }, 500);
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Delete all keywords first (foreign key constraint)
+    const { error: keywordsError } = await supabase
+      .from('post_keywords')
+      .delete()
+      .neq('post_id', ''); // Delete all rows
+
+    if (keywordsError) {
+      console.error('Error deleting all keywords:', keywordsError);
+      return c.json({ 
+        error: 'Failed to delete keywords from database',
+        details: keywordsError.message 
+      }, 500);
+    }
+
+    // Delete all posts
+    const { error: postsError } = await supabase
+      .from('community_posts')
+      .delete()
+      .neq('id', ''); // Delete all rows
+
+    if (postsError) {
+      console.error('Error deleting all posts:', postsError);
+      return c.json({ 
+        error: 'Failed to delete posts from database',
+        details: postsError.message 
+      }, 500);
+    }
+
+    console.log('All posts and keywords cleared successfully');
+    return c.json({ success: true, message: 'All posts and keywords cleared successfully' });
+
+  } catch (error: any) {
+    console.error('Error in clear all posts endpoint:', error);
+    return c.json({ 
+      error: error.message || 'Failed to clear posts',
     }, 500);
   }
 });

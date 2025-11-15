@@ -30,6 +30,7 @@ export interface AIItineraryRequest {
     departureTime?: string; // Time when departure flight lands (available from)
     returnTime?: string; // Time when return flight departs (available until)
   };
+  trendingKeywords?: string[]; // Add trending keywords from community
 }
 
 /**
@@ -53,7 +54,12 @@ export async function getAIActivitySuggestions(
     
     // Add user interests context - PRIORITIZE USER INTERESTS
     const userInterestsText = request.userInterests && request.userInterests.length > 0
-      ? `\n\nUser's interests: ${request.userInterests.join(', ')}.`
+      ? `\n\n🎯 IMPORTANT - User's travel interests (MUST match activities with these): ${request.userInterests.join(', ')}.\nInclude activities that match these interests and specify which interests match in the matchingInterests array.`
+      : '';
+    
+    // Add trending keywords context
+    const trendingText = request.trendingKeywords && request.trendingKeywords.length > 0
+      ? `\n\n🔥 TRENDING activities from community (consider including popular ones): ${request.trendingKeywords.join(', ')}.`
       : '';
     
     // Add flight time constraints
@@ -61,26 +67,49 @@ export async function getAIActivitySuggestions(
     if (request.flightConstraints) {
       if (request.flightConstraints.isFirstDay && request.flightConstraints.departureTime) {
         const arrivalTime = calculateArrivalTime(request.flightConstraints.departureTime);
-        flightConstraintsText = `\n\nNote: First day - activities must start after ${arrivalTime}.`;
+        flightConstraintsText = `\n\n⚠️ CONSTRAINT: First day - activities must start after ${arrivalTime} (arrival time).`;
       } else if (request.flightConstraints.isLastDay && request.flightConstraints.returnTime) {
-        flightConstraintsText = `\n\nNote: Last day - activities must end before ${request.flightConstraints.returnTime}.`;
+        flightConstraintsText = `\n\n⚠️ CONSTRAINT: Last day - activities must end before ${request.flightConstraints.returnTime} (departure time).`;
       }
     }
     
-    const prompt = `Suggest 1-2 activities for Day ${request.dayNumber} in ${request.destination}.${allActivitiesText}${existingActivitiesText}${userInterestsText}${flightConstraintsText}
+    // Build comprehensive prompt with clear instructions
+    const prompt = `You are a travel activity planner. Suggest 2-3 unique activities for Day ${request.dayNumber} in ${request.destination}.
 
-Return ONLY a JSON array:
+Requirements:
+- Each activity must have a specific, concrete name (NOT generic like "local food experience")
+- Activities must be actual places, restaurants, or attractions
+- Include real partner companies when possible
+- Match activities with user interests from the list provided
+- Avoid duplicating ANY activities already in the trip${allActivitiesText}${existingActivitiesText}${userInterestsText}${trendingText}${flightConstraintsText}
+
+You MUST respond with ONLY a valid JSON array in this EXACT format (no other text, no markdown):
 [
   {
-    "title": "Activity Name",
+    "title": "Specific Activity or Place Name",
     "time": "HH:MM",
-    "location": "Location",
-    "description": "Brief description",
-    "partnerName": "Partner",
+    "location": "Specific address or area in ${request.destination}",
+    "description": "Brief description of what guests will experience",
+    "partnerName": "Cathay Pacific Partner Company Name",
     "isEcoFriendly": true,
-    "matchingInterests": []
+    "matchingInterests": ["Interest1", "Interest2"]
   }
-]`;
+]
+
+Example output:
+[
+  {
+    "title": "Tsukiji Outer Market Food Tour",
+    "time": "10:00",
+    "location": "Tsukiji, Chuo City",
+    "description": "Explore fresh seafood and traditional Japanese ingredients",
+    "partnerName": "Tokyo Culinary Experience",
+    "isEcoFriendly": true,
+    "matchingInterests": ["Food & Cuisine", "Cultural Tours"]
+  }
+]
+
+Generate the JSON array now:`;
 
     console.log('=== AI SUGGESTION REQUEST ===');
     console.log('User Interests being sent to AI:', request.userInterests);
