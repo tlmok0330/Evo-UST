@@ -95,8 +95,8 @@ export function Rewards() {
   ];
 
   const travelPerks = [
-    { name: 'Priority Boarding', points: 1200, iconName: 'Plane', description: 'Board first on your next flight' },
-    { name: 'Priority Check-in', points: 1200, iconName: 'MapPin', description: 'Skip the queue at check-in' },
+    { name: 'Priority Boarding', points: 2500, iconName: 'Plane', description: 'Board first on your next flight' },
+    { name: 'Priority Check-in', points: 2500, iconName: 'MapPin', description: 'Skip the queue at check-in' },
     { name: 'Business Class Upgrade', points: 7500, iconName: 'Crown', description: 'One-way upgrade to Business Class' },
     { name: 'Extra Baggage Allowance', points: 3000, iconName: 'Gift', description: '+10kg baggage allowance' },
     { name: 'Seat Selection', points: 1500, iconName: 'Plane', description: 'Choose your preferred seat' }
