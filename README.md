@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
   # EvoGreen
 
@@ -9,3 +10,7 @@
 
   Run `npm run dev` to start the development server.
   
+=======
+# E150 - Evo UST
+cathay_hackathon_2025
+>>>>>>> 5a7a50c5a4b206833e7be38a96bb369e1c7bc0a3
