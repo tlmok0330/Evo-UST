@@ -86,12 +86,12 @@ const getTierInfo = (points: number) => {
 export function Profile() {
   const [accumulatedPoints, setAccumulatedPoints] = useState(() => {
     const saved = localStorage.getItem('greenPointsAccumulated');
-    return saved ? parseInt(saved) : 15000; // Gold tier status
+    return saved ? parseInt(saved) : 12467; // Gold tier status
   });
 
   const [greenPoints, setGreenPoints] = useState(() => {
     const saved = localStorage.getItem('greenPointsBalance');
-    return saved ? parseInt(saved) : 12500; // Higher balance for Gold tier
+    return saved ? parseInt(saved) : 12467; // Gold tier balance
   });
 
   const [interests, setInterests] = useState<string[]>(() => {

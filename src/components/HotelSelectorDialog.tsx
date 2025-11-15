@@ -136,18 +136,18 @@ export function HotelSelectorDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] p-0">
-        <DialogHeader className="bg-primary text-primary-foreground p-6">
-          <DialogTitle className="tracking-wide flex items-center gap-2">
+      <DialogContent className="max-w-3xl max-h-[90vh] p-0 w-[95vw] sm:w-full">
+        <DialogHeader className="bg-primary text-primary-foreground p-4 sm:p-6">
+          <DialogTitle className="tracking-wide flex items-center gap-2 text-base sm:text-lg">
             <Hotel className="h-5 w-5" />
             Choose Your Hotel in {destination}
           </DialogTitle>
-          <DialogDescription className="text-sm opacity-90 mt-1 text-primary-foreground/90">
+          <DialogDescription className="text-xs sm:text-sm opacity-90 mt-1 text-primary-foreground/90">
             Earn Green Points by choosing eco-friendly accommodations
           </DialogDescription>
         </DialogHeader>
 
-        <div className="p-6">
+        <div className="p-3 sm:p-6">
           {/* Search Bar */}
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -161,18 +161,18 @@ export function HotelSelectorDialog({
 
           {/* Sort Badge */}
           <div className="flex items-center gap-2 mb-4">
-            <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+            <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200 text-xs">
               <Leaf className="h-3 w-3 mr-1" />
               Eco-Friendly First
             </Badge>
           </div>
 
-          <ScrollArea className="h-[500px] pr-4">
-            <div className="space-y-4">
+          <ScrollArea className="h-[450px] sm:h-[500px] pr-2 sm:pr-4">
+            <div className="space-y-3 sm:space-y-4">
               {filteredHotels.map((hotel) => (
                 <Card
                   key={hotel.id}
-                  className={`p-4 transition-all hover:shadow-lg cursor-pointer ${
+                  className={`p-3 sm:p-4 transition-all hover:shadow-lg cursor-pointer ${
                     hotel.isEcoFriendly
                       ? 'border-2 border-green-500/50 bg-green-50/30'
                       : 'border-border hover:border-primary/50'
@@ -183,28 +183,28 @@ export function HotelSelectorDialog({
                   }`}
                   onClick={() => handleSelectHotel(hotel)}
                 >
-                  <div className="flex gap-4">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                     {/* Hotel Image Placeholder */}
-                    <div className="w-32 h-32 rounded-lg bg-gradient-to-br from-primary/20 to-green-500/20 flex items-center justify-center flex-shrink-0">
+                    <div className="w-full h-32 sm:w-32 sm:h-32 rounded-lg bg-gradient-to-br from-primary/20 to-green-500/20 flex items-center justify-center flex-shrink-0">
                       <Hotel className="h-12 w-12 text-primary/60" />
                     </div>
 
                     {/* Hotel Details */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="text-sm line-clamp-1">{hotel.name}</h3>
+                      <div className="flex items-start justify-between mb-2 gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <h3 className="text-sm sm:text-base">{hotel.name}</h3>
                             {hotel.isEcoFriendly && (
-                              <Badge className="bg-green-600 text-white text-xs">
+                              <Badge className="bg-green-600 text-white text-xs flex-shrink-0">
                                 <Leaf className="h-3 w-3 mr-1" />
                                 Eco
                               </Badge>
                             )}
                           </div>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                            <MapPin className="h-3 w-3" />
-                            {hotel.location}
+                            <MapPin className="h-3 w-3 flex-shrink-0" />
+                            <span className="line-clamp-1">{hotel.location}</span>
                           </div>
                           <div className="flex items-center gap-1 mb-2">
                             {[...Array(5)].map((_, i) => (
@@ -222,9 +222,9 @@ export function HotelSelectorDialog({
                             </span>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-lg text-primary">HK${hotel.pricePerNight}</div>
-                          <div className="text-xs text-muted-foreground">per night</div>
+                        <div className="text-right flex-shrink-0">
+                          <div className="text-base sm:text-lg text-primary">HK${hotel.pricePerNight}</div>
+                          <div className="text-xs text-muted-foreground whitespace-nowrap">per night</div>
                         </div>
                       </div>
 
@@ -233,29 +233,30 @@ export function HotelSelectorDialog({
                       </p>
 
                       {/* Amenities */}
-                      <div className="flex flex-wrap gap-2 mb-3">
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3">
                         {hotel.amenities.slice(0, 5).map((amenity, index) => (
                           <div
                             key={index}
                             className="flex items-center gap-1 text-xs bg-gray-100 px-2 py-1 rounded"
                           >
                             {getAmenityIcon(amenity)}
-                            <span>{amenity}</span>
+                            <span className="hidden sm:inline">{amenity}</span>
+                            <span className="sm:hidden">{amenity.split(' ')[0]}</span>
                           </div>
                         ))}
                       </div>
 
                       {/* Green Points */}
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
                         <div className="flex items-center gap-2 text-xs">
-                          <Leaf className="h-3 w-3 text-green-600" />
-                          <span className="text-green-700">
-                            Earn +{hotel.greenPoints} GP per night
+                          <Leaf className="h-3 w-3 text-green-600 flex-shrink-0" />
+                          <span className="text-green-700 whitespace-nowrap">
+                            +{hotel.greenPoints} GP/night
                           </span>
                         </div>
                         <Button
                           size="sm"
-                          className={hotel.isEcoFriendly ? 'bg-green-600 hover:bg-green-700' : ''}
+                          className={`text-xs h-8 ${hotel.isEcoFriendly ? 'bg-green-600 hover:bg-green-700' : ''}`}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleSelectHotel(hotel);
@@ -272,7 +273,7 @@ export function HotelSelectorDialog({
               {filteredHotels.length === 0 && (
                 <div className="text-center py-12 text-muted-foreground">
                   <Hotel className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                  <p>No hotels found matching your search</p>
+                  <p className="text-sm">No hotels found matching your search</p>
                 </div>
               )}
             </div>

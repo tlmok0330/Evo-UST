@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dashboard } from './components/Dashboard';
 import { TravelPlanner } from './components/TravelPlanner';
 import { Itinerary } from './components/Itinerary';
@@ -12,6 +12,11 @@ type Page = 'dashboard' | 'holiday' | 'itinerary' | 'rewards' | 'community' | 'p
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
+
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto">

@@ -85,12 +85,12 @@ interface DashboardProps {
 export function Dashboard({ onNavigate }: DashboardProps) {
   const [greenPoints, setGreenPoints] = useState(() => {
     const saved = localStorage.getItem('greenPointsBalance');
-    return saved ? parseInt(saved) : 680;
+    return saved ? parseInt(saved) : 12467;
   });
   
   const [accumulatedPoints, setAccumulatedPoints] = useState(() => {
     const saved = localStorage.getItem('greenPointsAccumulated');
-    return saved ? parseInt(saved) : 15000; // Gold tier status
+    return saved ? parseInt(saved) : 12467; // Gold tier status
   });
   
   const [co2Saved, setCo2Saved] = useState(() => {

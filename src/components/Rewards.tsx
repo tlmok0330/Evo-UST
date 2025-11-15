@@ -34,7 +34,7 @@ export function Rewards() {
   // Load initial state from localStorage
   const [greenPointsBalance, setGreenPointsBalance] = useState(() => {
     const saved = localStorage.getItem('greenPointsBalance');
-    return saved ? parseInt(saved) : 3000;
+    return saved ? parseInt(saved) : 12467;
   });
   
   const [redeemedCoupons, setRedeemedCoupons] = useState<RedeemedCoupon[]>(() => {
@@ -89,33 +89,32 @@ export function Rewards() {
   }, []);
 
   const exclusivePerks = [
-    { name: 'Cockpit Meet-and-Greet', points: 50000, iconName: 'Crown', description: 'Exclusive tour and photo opportunity' },
-    { name: 'Private Lounge Access', points: 25000, iconName: 'Sparkles', description: 'Premium lounge with spa facilities' },
+    { name: 'Cockpit Meet-and-Greet', points: 3000, iconName: 'Crown', description: 'Exclusive tour and photo opportunity' },
     { name: 'Sustainability Workshop', points: 1500, iconName: 'Star', description: 'Learn from aviation sustainability experts' },
     { name: 'VIP Ground Services', points: 4000, iconName: 'Crown', description: 'Personal assistant at airport' }
   ];
 
   const travelPerks = [
-    { name: 'Priority Boarding', points: 6000, iconName: 'Plane', description: 'Board first on your next flight' },
-    { name: 'Priority Check-in', points: 5000, iconName: 'MapPin', description: 'Skip the queue at check-in' },
-    { name: 'Business Class Upgrade', points: 40000, iconName: 'Crown', description: 'One-way upgrade to Business Class' },
-    { name: 'Extra Baggage Allowance', points: 8000, iconName: 'Gift', description: '+10kg baggage allowance' },
-    { name: 'Seat Selection', points: 4000, iconName: 'Plane', description: 'Choose your preferred seat' }
+    { name: 'Priority Boarding', points: 1200, iconName: 'Plane', description: 'Board first on your next flight' },
+    { name: 'Priority Check-in', points: 1200, iconName: 'MapPin', description: 'Skip the queue at check-in' },
+    { name: 'Business Class Upgrade', points: 7500, iconName: 'Crown', description: 'One-way upgrade to Business Class' },
+    { name: 'Extra Baggage Allowance', points: 3000, iconName: 'Gift', description: '+10kg baggage allowance' },
+    { name: 'Seat Selection', points: 1500, iconName: 'Plane', description: 'Choose your preferred seat' }
   ];
 
   const travelComforts = [
-    { name: 'Inflight WiFi Access', points: 6000, iconName: 'Wifi', description: 'Full flight internet access' },
-    { name: 'Gourmet Meal Voucher', points: 5000, iconName: 'Coffee', description: 'Premium meal selection' },
-    { name: 'Amenity Kit Upgrade', points: 3000, iconName: 'Gift', description: 'Luxury travel essentials' },
-    { name: 'In-flight Entertainment Plus', points: 2500, iconName: 'Star', description: 'Extended content library' },
-    { name: 'Complimentary Beverages', points: 2000, iconName: 'Coffee', description: 'Premium drinks on board' }
+    { name: 'In-flight WiFi (Single Flight)', points: 1500, iconName: 'Wifi', description: 'Full flight internet access' },
+    { name: 'Complimentary Meal Upgrade', points: 1600, iconName: 'Coffee', description: 'Premium meal selection' },
+    { name: 'Amenity Kit Upgrade', points: 1800, iconName: 'Gift', description: 'Luxury travel essentials' },
+    { name: 'In-flight Entertainment Plus', points: 650, iconName: 'Star', description: 'Extended content library' },
+    { name: 'Complimentary Beverages', points: 500, iconName: 'Coffee', description: 'Premium drinks on board' }
   ];
 
   const milesMore = [
-    { name: '100 Asia Miles', points: 1200, iconName: 'Trophy', description: 'Exchange for Asia Miles' },
-    { name: '250 Asia Miles', points: 3000, iconName: 'Trophy', description: 'Exchange for Asia Miles' },
-    { name: '500 Asia Miles', points: 40000, iconName: 'Trophy', description: 'Exchange for Asia Miles' },
-    { name: '1,000 Asia Miles', points: 12000, iconName: 'Trophy', description: 'Exchange for Asia Miles' }
+    { name: '500 Asia Miles', points: 300, iconName: 'Trophy', description: 'Exchange for Asia Miles' },
+    { name: '2,500 Asia Miles', points: 1300, iconName: 'Trophy', description: 'Exchange for Asia Miles' },
+    { name: '5,000 Asia Miles', points: 2600, iconName: 'Trophy', description: 'Exchange for Asia Miles' },
+    { name: 'Cathay Lounge Access (Single Visit)', points: 3000, iconName: 'Sparkles', description: 'Premium lounge experience' }
   ];
 
   const canAfford = (points: number) => greenPointsBalance >= points;
