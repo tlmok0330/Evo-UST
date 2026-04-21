@@ -1,3 +1,5 @@
+
+
 # E150 - Evo UST
 cathay_hackathon_2025
 
@@ -12,3 +14,4 @@ Frontend complete ; **Supabase backend removed**.
 
 ## Demo
 - **Preview:** - walkthrough: UI, mocked login, and main feature.
+<img width="424" height="834" alt="image" src="https://github.com/user-attachments/assets/023e0d8b-19a5-48a2-9e0a-38b85d563f12" />
