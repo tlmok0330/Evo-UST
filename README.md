@@ -14,10 +14,13 @@ Frontend complete ; **Supabase backend removed**.
 
 ## Demo
 - **Preview:** - walkthrough: UI, mocked login, and main feature.
+
 **Profile**
 <img width="433" height="834" alt="image" src="https://github.com/user-attachments/assets/4eefa783-c92d-4099-976b-389888ed8814" />
+
 **Booking**
 <img width="412" height="817" alt="image" src="https://github.com/user-attachments/assets/66783228-370a-446a-a2aa-6dc28b3e3f76" />
+
 **AI Holiday Planner**
 <img width="424" height="834" alt="image" src="https://github.com/user-attachments/assets/0f7f24fb-2bf1-47f0-8c81-4f6b906eb609" />
 
