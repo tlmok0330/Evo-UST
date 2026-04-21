@@ -14,5 +14,6 @@ Frontend complete ; **Supabase backend removed**.
 
 ## Demo
 - **Preview:** - walkthrough: UI, mocked login, and main feature.
-<img width="424" height="834" alt="image" src="https://github.com/user-attachments/assets/4a1787c1-58fd-4e3b-b94d-04005178bc90" />
+<img width="433" height="834" alt="image" src="https://github.com/user-attachments/assets/4eefa783-c92d-4099-976b-389888ed8814" />
+
 
