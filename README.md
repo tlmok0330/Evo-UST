@@ -19,7 +19,8 @@ Frontend complete ; **Supabase backend removed**.
 <img width="433" height="834" alt="image" src="https://github.com/user-attachments/assets/4eefa783-c92d-4099-976b-389888ed8814" />
 
 **Booking**
-<img width="406" height="815" alt="image" src="https://github.com/user-attachments/assets/a4f8b6a6-fc4c-4038-a1fc-18d52025d6d7" />
+<img width="412" height="817" alt="image" src="https://github.com/user-attachments/assets/0fa19cec-fbb2-4a8e-afc6-42bd9b890883" />
+
 
 **AI Holiday Planner**
 <img width="424" height="834" alt="image" src="https://github.com/user-attachments/assets/0f7f24fb-2bf1-47f0-8c81-4f6b906eb609" />
