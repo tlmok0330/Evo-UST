@@ -7,7 +7,7 @@ EvoGreen 📱 serves as both a GreenPoints reward system and an AI‑powered e
 
 
 ## Status
-**Status:** Frontend complete; **Supabase backend removed**.
+Frontend complete ; **Supabase backend removed**.
 
 
 ## Demo
